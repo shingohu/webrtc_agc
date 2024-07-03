@@ -108,8 +108,8 @@ class WebrtcAgc {
   ///[targetLevelDBFS]default 3 (-3 dBOv), dbfs表示相对于full scale的下降值，0表示full scale，越小声音越大
   ///[compressionGainDB] default 9 dB,在Fixed模式下，越大声音越大
   static void setConfig(
-      {int targetLevelDBFS = 9,
-      int compressionGainDB = 3,
+      {int targetLevelDBFS = 3,
+      int compressionGainDB = 9,
       bool limiterEnable = true}) {
     if (_hasInit) {
       _bindings.webrtc_agc_set_config(
@@ -119,6 +119,7 @@ class WebrtcAgc {
 
   ///处理byte数组,如果没有初始化,或者处理失败返回原始数据
   ///如果处理成功 返回处理后的数据
+  ///数据长度最好为160byte的倍数
   static Uint8List process(Uint8List bytes) {
     if (_hasInit) {
       return ffi.using((arena) {
