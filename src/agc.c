@@ -19,6 +19,7 @@
 
 #include "agc.h"
 #include <stdlib.h>
+#include <math.h>
 
 #ifdef WEBRTC_AGC_DEBUG_DUMP
 #include <stdio.h>
