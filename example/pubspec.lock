@@ -151,7 +151,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "68f7754df3bcd536fc3aef5a39b8f4b9dafd99be"
+      resolved-ref: c71516a06a3e49014740ee289bb6e3dda6d584bf
       url: "https://github.com/shingohu/webrtc_ns"
     source: git
     version: "0.0.1"

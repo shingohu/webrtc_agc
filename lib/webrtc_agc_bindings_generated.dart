@@ -27,7 +27,7 @@ class WebrtcAgcBindings {
           lookup)
       : _lookup = lookup;
 
-  int webrtc_agc_init(
+  ffi.Pointer<ffi.Void> webrtc_agc_init(
     int minLevel,
     int maxLevel,
     int sampleRate,
@@ -43,52 +43,62 @@ class WebrtcAgcBindings {
 
   late final _webrtc_agc_initPtr = _lookup<
       ffi.NativeFunction<
-          ffi.Int Function(
+          ffi.Pointer<ffi.Void> Function(
               ffi.Int, ffi.Int, ffi.Int, ffi.Int)>>('webrtc_agc_init');
-  late final _webrtc_agc_init =
-      _webrtc_agc_initPtr.asFunction<int Function(int, int, int, int)>();
+  late final _webrtc_agc_init = _webrtc_agc_initPtr
+      .asFunction<ffi.Pointer<ffi.Void> Function(int, int, int, int)>();
 
   int webrtc_agc_set_config(
+    ffi.Pointer<ffi.Void> handle,
     int targetLevelDbfs,
     int compressionGaindB,
     int limiterEnable,
   ) {
     return _webrtc_agc_set_config(
+      handle,
       targetLevelDbfs,
       compressionGaindB,
       limiterEnable,
     );
   }
 
-  late final _webrtc_agc_set_configPtr =
-      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Int, ffi.Int, ffi.Int)>>(
-          'webrtc_agc_set_config');
-  late final _webrtc_agc_set_config =
-      _webrtc_agc_set_configPtr.asFunction<int Function(int, int, int)>();
+  late final _webrtc_agc_set_configPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<ffi.Void>, ffi.Int, ffi.Int,
+              ffi.Int)>>('webrtc_agc_set_config');
+  late final _webrtc_agc_set_config = _webrtc_agc_set_configPtr
+      .asFunction<int Function(ffi.Pointer<ffi.Void>, int, int, int)>();
 
   int webrtc_agc_process(
+    ffi.Pointer<ffi.Void> handle,
     ffi.Pointer<ffi.Int16> src_audio_data,
     int length,
   ) {
     return _webrtc_agc_process(
+      handle,
       src_audio_data,
       length,
     );
   }
 
   late final _webrtc_agc_processPtr = _lookup<
-          ffi
-          .NativeFunction<ffi.Int Function(ffi.Pointer<ffi.Int16>, ffi.Int64)>>(
-      'webrtc_agc_process');
-  late final _webrtc_agc_process = _webrtc_agc_processPtr
-      .asFunction<int Function(ffi.Pointer<ffi.Int16>, int)>();
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Int16>,
+              ffi.Int64)>>('webrtc_agc_process');
+  late final _webrtc_agc_process = _webrtc_agc_processPtr.asFunction<
+      int Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Int16>, int)>();
 
-  void webrtc_agc_destroy() {
-    return _webrtc_agc_destroy();
+  void webrtc_agc_destroy(
+    ffi.Pointer<ffi.Void> handle,
+  ) {
+    return _webrtc_agc_destroy(
+      handle,
+    );
   }
 
   late final _webrtc_agc_destroyPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function()>>('webrtc_agc_destroy');
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
+          'webrtc_agc_destroy');
   late final _webrtc_agc_destroy =
-      _webrtc_agc_destroyPtr.asFunction<void Function()>();
+      _webrtc_agc_destroyPtr.asFunction<void Function(ffi.Pointer<ffi.Void>)>();
 }

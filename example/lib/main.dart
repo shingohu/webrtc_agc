@@ -18,6 +18,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  WebrtcAgc webrtcAgc = WebrtcAgc();
+  WebrtcNS webrtcNS = WebrtcNS();
+
   @override
   void initState() {
     super.initState();
@@ -38,8 +41,8 @@ class _MyAppState extends State<MyApp> {
               children: [
                 TextButton(
                     onPressed: () {
-                      WebrtcAgc.init(16000);
-                      WebrtcNS.init(16000);
+                      webrtcAgc.init(16000);
+                      webrtcNS.init(16000);
                     },
                     child: Text("初始化")),
                 TextButton(
@@ -47,8 +50,8 @@ class _MyAppState extends State<MyApp> {
                       ByteData byteData =
                           await rootBundle.load("assets/test.pcm");
                       Uint8List bytes = byteData.buffer.asUint8List();
-                      bytes = WebrtcNS.process(
-                          WebrtcAgc.process(WebrtcNS.process(bytes)));
+                      bytes = webrtcNS
+                          .process(webrtcAgc.process(webrtcNS.process(bytes)));
                       File? file = await _createCacheAudioFile("test");
                       if (file != null) {
                         file.writeAsBytes(bytes);
@@ -58,8 +61,8 @@ class _MyAppState extends State<MyApp> {
                     child: Text("自动增益处理")),
                 TextButton(
                     onPressed: () {
-                      WebrtcAgc.destroy();
-                      WebrtcNS.destroy();
+                      webrtcNS.release();
+                      webrtcAgc.release();
                     },
                     child: Text("销毁")),
               ],

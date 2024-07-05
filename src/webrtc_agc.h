@@ -17,12 +17,13 @@
 #define FFI_PLUGIN_EXPORT
 #endif
 
-FFI_PLUGIN_EXPORT int webrtc_agc_init(int minLevel, int maxLevel, int sampleRate, int mode);
+FFI_PLUGIN_EXPORT void *webrtc_agc_init(int minLevel, int maxLevel, int sampleRate, int mode);
 
-FFI_PLUGIN_EXPORT int webrtc_agc_set_config(int targetLevelDbfs, int compressionGaindB, int limiterEnable);
+FFI_PLUGIN_EXPORT int
+webrtc_agc_set_config(void *handle,int targetLevelDbfs, int compressionGaindB, int limiterEnable);
 
-FFI_PLUGIN_EXPORT int webrtc_agc_process(int16_t *src_audio_data, int64_t length);
+FFI_PLUGIN_EXPORT int webrtc_agc_process(void *handle,int16_t *src_audio_data, int64_t length);
 
 
-FFI_PLUGIN_EXPORT void webrtc_agc_destroy();
+FFI_PLUGIN_EXPORT void webrtc_agc_destroy(void *handle);
 

@@ -55,79 +55,58 @@ enum AGCMode {
 }
 
 class WebrtcAgc {
-  WebrtcAgc._();
+  final Pointer<Void> _nullptr = Pointer.fromAddress(0);
 
-  static bool _hasInit = false;
-  static int? _sampleRate;
-  static AGCMode? _mode;
-  static int? _minLevel;
-  static int? _maxLevel;
+  Pointer<Void>? _handle;
+
+  bool get _hasInit => _handle != null && _handle != _nullptr;
 
   ///初始化
   ///[sampleRate]音频数据采样率
   ///[mode]AGC模式,默认为AdaptiveDigital
   ///[minLevel] 最小麦克风音量 默认0
   ///[maxLevel] 最大麦克风音量 默认255
-  static bool init(int sampleRate,
+  void init(int sampleRate,
       {int minLevel = 0,
       int maxLevel = 255,
       AGCMode mode = AGCMode.AdaptiveDigital}) {
-    if (_hasInit) {
-      if (_sampleRate != sampleRate ||
-          _mode != mode ||
-          _maxLevel != maxLevel ||
-          _minLevel != minLevel) {
-        destroy();
-      }
-    }
-    if (!_hasInit) {
-      int ret =
-          _bindings.webrtc_agc_init(minLevel, maxLevel, sampleRate, mode.index);
-      _hasInit = ret == 0;
-      _sampleRate = sampleRate;
-      _mode = mode;
-      _minLevel = minLevel;
-      _maxLevel = maxLevel;
-    }
-    return _hasInit;
+    release();
+    _handle =
+        _bindings.webrtc_agc_init(minLevel, maxLevel, sampleRate, mode.index);
   }
 
   ///销毁
-  static void destroy() {
+  void release() {
     if (_hasInit) {
-      _bindings.webrtc_agc_destroy();
-      _hasInit = false;
-      _minLevel = null;
-      _maxLevel = null;
-      _sampleRate = null;
-      _mode = null;
+      _bindings.webrtc_agc_destroy(_handle!);
+      _handle = null;
     }
   }
 
   ///设置AGC配置
   ///[targetLevelDBFS]default 3 (-3 dBOv), dbfs表示相对于full scale的下降值，0表示full scale，越小声音越大
   ///[compressionGainDB] default 9 dB,在Fixed模式下，越大声音越大
-  static void setConfig(
+  void setConfig(
       {int targetLevelDBFS = 3,
       int compressionGainDB = 9,
       bool limiterEnable = true}) {
     if (_hasInit) {
       _bindings.webrtc_agc_set_config(
-          targetLevelDBFS, compressionGainDB, limiterEnable ? 1 : 0);
+          _handle!, targetLevelDBFS, compressionGainDB, limiterEnable ? 1 : 0);
     }
   }
 
   ///处理byte数组,如果没有初始化,或者处理失败返回原始数据
   ///如果处理成功 返回处理后的数据
   ///数据长度最好为160byte的倍数
-  static Uint8List process(Uint8List bytes) {
+  Uint8List process(Uint8List bytes) {
     if (_hasInit) {
       return ffi.using((arena) {
         Int16List shorts = _bytesToShort(bytes);
         int length = shorts.length;
         final ptr = arena<Int16>(length);
         ptr.asTypedList(length).setAll(0, shorts);
-        int ret = _bindings.webrtc_agc_process(ptr, length);
+        int ret = _bindings.webrtc_agc_process(_handle!, ptr, length);
         if (ret == 0) {
           return _shortToBytes(ptr.asTypedList(length));
         } else {
